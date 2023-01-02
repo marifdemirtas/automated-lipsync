@@ -1,0 +1,56 @@
+<html>
+  <head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="container">
+      <div class="jumbotron">
+        <a href="{{ url_for('index') }}"><h1 class="text-center"> Lip Sync </h1></a>
+      </div>
+      <div class="container text-center lg-8">
+        <audio id="audio" controls autoplay>
+          <source src="{{ url_for('audio_feed') }}" type="audio/x-wav">
+          Your browser does not support the audio element.
+        </audio>
+      </div>
+      
+      
+      <div class="container lg-12">
+        {% if stream %}
+        <img class="rounded mx-auto d-block img-fluid" src="{{ url_for('video_feed') }}" />
+        {% else %}
+        <video autoplay="autoplay" controls="controls" preload="preload">
+          <source src="{{ url_for('video_feed') }}" type="video/mp4"></source>
+        </video>
+        {% endif %}
+      </div>
+
+    </div>
+
+    <script type="text/javascript">
+      // array of the events we want to track
+      var events=new Array("play", "pause");
+    
+      var vid=document.getElementById('audio');
+    
+      // add event listeners to the video
+      for (var i in events) {
+        vid.addEventListener(events[i], sendMsg, false);
+      }
+    
+    function sendMsg(e) {
+      if (e.type == "play") {
+        $.post( "/status", {
+          action: 'play' 
+        });
+      } else if (e.type == "pause") {
+        $.post( "/status", {
+          action: 'pause' 
+        });
+      }
+    }
+    
+    </script>
+  </body>
+</html>
